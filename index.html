@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>To Do List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="./jquery-ui-1.12.1/jquery-ui.css">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-center" id="head">
+            <div class="tab col-sm-2 text-center focus transition" data-type="all">全部</div>
+            <div class="tab col-sm-2 text-center transition" data-type="progress">進行中</div>
+            <div class="tab col-sm-2 text-center transition" data-type="complete">已完成</div>
+        </div>
+        <section id="body" class="row justify-content-center no-gutters">
+            <div class="col-sm-6">
+                <div id="addTask" class="row no-gutters">
+                    <div class="col">
+                        <div class="row justify-content-between task-name">
+                            <div class="col">
+                                <i class="fas fa-plus"></i>
+                                <input type="text" placeholder="做些什麼..." class="form-control">
+                            </div>
+                        </div>
+                        <div class="row task-detail">
+                            <div class="col">
+                                <div class="row title">
+                                    <div class="col">
+                                        <i class="far fa-calendar-alt"></i>
+                                        起始日
+                                    </div>
+                                    <div class="col">
+                                        <i class="far fa-calendar-alt"></i>
+                                        到期日
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <input type="text" class="form-control datepicker start">
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" class="form-control datepicker end">
+                                    </div>
+                                </div>
+                                <div class="row title">
+                                    <div class="col">
+                                        <i class="fas fa-comment-dots"></i>
+                                        備註
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <textarea class="form-control" name="" id="" cols="30" rows="3" style="resize: none"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row btns">
+                                    <button class="btn col-sm-6 center cancel">
+                                        <i class="fas fa-times"></i>取消</button>
+                                    <button class="btn col-sm-6 center add">
+                                        <i class="fas fa-plus"></i>確定</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="tasks" class="row no-gutters">
+                    <div class="col">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.2.0/js/all.js" integrity="sha384-4oV5EgaV02iISL2ban6c/RmotsABqE4yZxZLcYMAdG7FAPsyHYAPpywE9PJo+Khy"
+        crossorigin="anonymous"></script>
+    <script src="./jquery-ui-1.12.1/jquery-ui.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

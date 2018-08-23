@@ -1,0 +1,190 @@
+$color-main: #E1E1E1;
+body {
+    margin: 0;
+    font-family: '微軟正黑體';
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-fluid {
+    // width: 1024px;
+    background-color: $color-main;
+    // border: 1px solid black;
+    // box-shadow: 2px 2px 2px #ccc;
+    min-height: 100vh;
+    overflow: auto;
+    .wrapper {
+        // width: 640px;
+    }
+    #head {
+        background-color: #4A90E2;
+        position: relative; // &::after {
+        //     content: "";
+        //     position: absolute;
+        //     bottom: 0;
+        //     width: 30%;
+        //     background-color: blue;
+        //     height: 5px;
+        // }
+        .tab {
+            padding: 10px 0; // width: 30%;
+            box-sizing: border-box; // text-align: center;
+            color: #ffffff;
+            font-size: 24px;
+            position: relative;
+            font-weight: 700;
+            cursor: pointer;
+            &:hover {
+                color: #00408B;
+            }
+            &.focus {
+                color: #00408B;
+                &::after {
+                    content: "";
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    background-color: blue;
+                    height: 5px;
+                }
+            }
+        }
+    }
+    #body {
+        #addTask {
+            background-color: #f2f2f2; // padding: 15px 25px;
+            margin: 20px 0;
+            border-radius: 5px;
+            position: relative;
+            
+            input {
+                width: 100%;
+            }
+        }
+        #tasks {
+            .task{
+                background-color: rgb(164, 212, 176);
+                border-radius: 5px;
+                padding: 15px;
+                margin: 10px 0;
+                &.complete{
+                    background-color: #F2F2F2;
+                    .taskname{
+                        color: #666;
+                        text-decoration: line-through;
+                    }
+                }
+                &.ontop{
+                    background-color: #FFF2DC;
+                    .fa-star{
+                        color: #F5A623;
+                        &:hover{
+                            color: #F5A623;
+                        }
+                    }
+                }
+                input[type=checkbox]{
+                    width: 20px;
+                    height: 20px;
+
+                }
+                .fa-star, .fa-pen{
+                    color: #aaa;
+                    cursor: pointer;
+                    
+                    &:hover {
+                        color: #333;
+                    }
+                }
+                &.ontop{
+                    background-color: #FFF2DC;
+                }
+                .row:nth-child(2){
+                    // padding-right: 15px;
+                    margin-top: 10px;
+                }
+                .pop-btn {
+                    position: relative;
+                    cursor: pointer;
+                    &:hover svg, &.focus svg{
+                        color: #F5A623;
+                    }
+                    >:first-child{
+                        position: absolute;
+                        left: 0;
+                        bottom: 0;
+                        transform: translateX(35px);
+                        opacity: 1;
+                        transition: all .5s;
+                        width: 100px;
+                        height: fit-content;
+                        padding: 8px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.transition {
+    transition: all .2s;
+}
+
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.hide{
+    display: none;
+    opacity: 0;
+}
+.task-name, .task-detail {
+    margin: 10px 0;
+    .title {
+        font-size: 16px;
+    }
+    .btns {
+        margin: 10px 0 0;
+        svg {
+            margin: 5px;
+        }
+        button {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        .cancel {
+            color: #D0021B;
+            background-color: #fff;
+            &:hover{
+                background-color: #ddd;
+            }
+        }
+        .add {
+            background-color: #4A90E2;
+            color: #fff;
+            &:hover{
+                background-color: lighten($color: #4A90E2, $amount: 5%);
+            }
+        }
+    }
+}
+.task-name {
+    font-size: 20px;
+    input[type=text] {
+        padding: 5px 8px 5px 40px;
+        font-size: 18px;
+    }
+    svg {
+        position: absolute;
+        left: 30px;
+        color: #666666;
+        height: 100%;
+    }
+}
+.task-detail{
+    display: none;
+    // margin-bottom: 0;
+}
