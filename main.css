@@ -64,6 +64,8 @@ body {
       cursor: pointer; }
       .container-fluid #body #tasks .task .fa-star:hover, .container-fluid #body #tasks .task .fa-pen:hover {
         color: #333; }
+    .container-fluid #body #tasks .task .task-detail .fa-pen {
+      color: #fff; }
     .container-fluid #body #tasks .task.ontop {
       background-color: #FFF2DC; }
     .container-fluid #body #tasks .task .row:nth-child(2) {
@@ -99,7 +101,8 @@ body {
 .task-name, .task-detail {
   margin: 10px 0; }
   .task-name .title, .task-detail .title {
-    font-size: 16px; }
+    font-size: 16px;
+    margin: 10px 0 5px; }
   .task-name .btns, .task-detail .btns {
     margin: 10px 0 0; }
     .task-name .btns svg, .task-detail .btns svg {

@@ -98,6 +98,11 @@ body {
                         color: #333;
                     }
                 }
+                .task-detail{
+                    .fa-pen{
+                        color: #fff;
+                    }
+                }
                 &.ontop{
                     background-color: #FFF2DC;
                 }
@@ -145,6 +150,7 @@ body {
     margin: 10px 0;
     .title {
         font-size: 16px;
+        margin: 10px 0 5px;
     }
     .btns {
         margin: 10px 0 0;

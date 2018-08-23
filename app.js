@@ -6,8 +6,22 @@ let store = [],
     $cancelBtn = $('.cancel'),
     $addTask = $('#addTask'),
     $name = $addTask.find(':text'),
-    $deadline = $addTask.find('.datepicker').eq(0),
+    $startDate = $addTask.find('.datepicker.start').eq(0),
+    $endDate = $addTask.find('.datepicker.end').eq(0),
     $comment = $addTask.find('textarea'),
+    url = (id) => 'http://localhost:3000/todos/' + (id === undefined ? '' : id),
+    fetchOption = function(method, body){
+        return {
+            headers: {
+                'content-type': 'application/json',
+            },
+            method: method,
+            body: JSON.stringify(body)            
+        }
+    },
+    _fetch = function(url, option){
+        return fetch(url, option).then(res => res.json())
+    },
     render = function(tasks){
         let html = tasks.reduce(function(accumulator, task){
             accumulator += taskHtml(task);
@@ -20,11 +34,12 @@ let store = [],
     },
     emptyInput = function(){
         $name.val('');
-        $deadline.val('');
+        $startDate.datepicker('setDate', new Date);;
+        $endDate.datepicker('setDate', +7);;
         $comment.val('');
     },
     taskHtml = function(task){
-        let {name, status, ontop, deadline, comment, id} = task,
+        let {name, status, ontop, startDate, endDate, comment, id} = task,
             html = `<div data-id="${id}" class="row no-gutters task ${ontop ? 'ontop' : ''} ${status === 'complete' ? status : ''}">
                 <div class="col">
                     <div class="row justify-content-between no-gutters">
@@ -46,7 +61,7 @@ let store = [],
                         </div>
                         <div class="col col-sm-auto">
                             <i class="far fa-calendar-alt"></i>
-                            ${deadline}
+                            ${startDate} ~ ${endDate}
                         </div>
                         <div class="col col-sm-auto pop-btn" >
                             <div class="popover hide">${comment}</div>
@@ -63,18 +78,21 @@ let store = [],
                         </div>
                         <div class="row task-detail" style="display: block">
                             <div class="col">
-                                <div class="row title">
+                                <div class="row title no-gutters">
                                     <div class="col">
                                         <i class="far fa-calendar-alt"></i>
                                         到期日
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-3">
-                                        <input type="text" class="form-control datepicker" value="${deadline}">
+                                    <div class="col">
+                                        <input type="text" class="form-control datepicker start" value="${startDate}">
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" class="form-control datepicker end" value="${endDate}">
                                     </div>
                                 </div>
-                                <div class="row title">
+                                <div class="row title no-gutters">
                                     <div class="col">
                                         <i class="fas fa-comment-dots"></i>
                                         備註
@@ -89,7 +107,7 @@ let store = [],
                                     <button class="btn col-sm-6 center cancel">
                                         <i class="fas fa-times"></i>取消</button>
                                     <button class="btn col-sm-6 center add">
-                                        <i class="fas fa-plus"></i>確定</button>
+                                        <i class="fas fa-pen"></i>修改</button>
                                 </div>
                             </div>
                         </div>
@@ -102,43 +120,45 @@ let store = [],
     },
     getTaskData = function(el){
         let name = $name.val();
-            deadline = $deadline.val();
+            startDate = $startDate.val();
+            endDate = $endDate.val();
             comment = $comment.val();
         
-        return new Task(name, deadline, comment);
+        return new Task(name, startDate, endDate, comment);
     },
     validate = function(task){
         return task.name === '';
     },
     getId = (function(){
-        let id = -1;
+        let id;
         return function(){
-            return ++id
+            return id === undefined ? id = 0 : ++id
         };
     })();
 class Task{
-    constructor(name, deadline, comment){
-        
-        this.id = getId();
+    constructor(name, startDate, endDate, comment){
         this.name = name;
-        this.deadline = deadline;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.comment = comment;
         this.status = 'progress';
         this.ontop = false;
-        console.log(this.id)
-    }
-    moveTop(){
-        this.ontop = true;
-    }
-    complete(){
-        this.status = 'complete';
-    }
-    undo(){
-        this.status = 'progress';
     }
 }
 // init datepicker
-$( ".datepicker.start" ).datepicker({minDate: 0}).val($.datepicker.formatDate('yy/mm/dd', new Date));
+$.datepicker.setDefaults({
+    minDate: 0,
+    dateFormat: 'yy/mm/dd'
+})
+$( ".datepicker.start" ).datepicker().datepicker('setDate', new Date);
+$( ".datepicker.end" ).datepicker().datepicker('setDate', +7);
+// read all task
+$(document).ready(function(){
+    _fetch(url()).then((tasks) => {
+        render(tasks);
+        store = tasks;
+    })
+})
 // 換頁
 $tab.on('click', function(){
     let isFocus = $(this).hasClass('focus'),
@@ -153,25 +173,34 @@ $tab.on('click', function(){
 })
 // 新增任務
 $addBtn.on('click', function(){
-    let task = getTaskData();
+    let task = getTaskData(),
+        tasks;
     if(validate(task)) return alert('請填任務名稱');
-    store.push(task);
-    render(store);
+    _fetch(url(), fetchOption('POST', task))
+        .then(task => {
+            store.push(task)
+            
+            tasks = tabType === 'all' ? store : filterStore(tabType);
+            render(tasks);
 
-    emptyInput();
-    $(this).closest('.task-detail').slideUp();
+            emptyInput();
+            $(this).closest('.task-detail').slideUp();        
+        });    
 })
 // 完成任務
 $tasks.on('click', ':checkbox', function(){
     let $task = $(this).closest('.task'),
         index = +$task.data('id'),
         isCheck = $(this).prop('checked'),
+        status = !isCheck ? 'progress' : 'complete',
         tasks;
-    if(isCheck) store[index].complete();
-    else store[index].undo();
-
-    tasks = tabType !== 'all' ? filterStore(tabType) : store;
-    render(tasks);
+    // console.log(isCheck, status)
+    _fetch(url(index), fetchOption('PATCH', {status: status}))
+        .then(task => {
+            store[index - 1].status = status;
+            tasks = tabType !== 'all' ? filterStore(tabType) : store;
+            render(tasks);
+        })
 })
 // 新增任務時展開
 $('.task-name input').on('focus', function(){
@@ -180,6 +209,7 @@ $('.task-name input').on('focus', function(){
 // 取消新增任務
 $cancelBtn.on('click', function(){
     $(this).closest('.task-detail').slideUp();
+    emptyInput();
 })
 // 標註重點任務
 $tasks.on('click', '.fa-star', function(e){
@@ -192,9 +222,12 @@ $tasks.on('click', '.fa-star', function(e){
     for(let task of store){
         if(task.id !== id) continue;
         task.ontop = !isOntop;
+        _fetch(url(id), fetchOption('PATCH', {ontop: !isOntop}))
+            .then(() => {
+                tasks = tabType === 'all' ? store : filterStore(tabType);
+                render(tasks);
+            })
     }
-    tasks = tabType === 'all' ? store : filterStore(tabType);
-    render(tasks);
 })
 // 編輯任務
 $tasks.on('click', '.fa-pen', function(e){
@@ -210,7 +243,8 @@ $tasks.on('click', '.add', function(e){
     let $task = $(this).closest('.task'),
         id = +$task.data('id'),
         name = $task.find('.task-name input').val(),
-        deadline = $task.find('.task-detail input').val(),
+        startDate = $task.find('.start').val(),
+        endDate = $task.find('.end').val(),
         comment = $task.find('.task-detail textarea').val(),
         originalTask = $task.find('>.col:first'),
         taskDetail = $task.find('>.col:nth-child(2)'),
@@ -218,15 +252,17 @@ $tasks.on('click', '.add', function(e){
     for(let task of store){
         if(task.id !== id) continue;
         task.name = name;
-        task.deadline = deadline;
+        task.startDate = startDate;
+        task.endDate = endDate;
         task.comment = comment;
+        _fetch(url(id), fetchOption('PUT', task))
+            .then(() => {
+                originalTask.toggleClass('hide')
+                taskDetail.toggleClass('hide')
+                tasks = tabType === 'all' ? store : filterStore(tabType);
+                render(tasks);
+            })
     }
-    
-    console.log(originalTask, taskDetail)
-    originalTask.toggleClass('hide')
-    taskDetail.toggleClass('hide')
-    tasks = tabType === 'all' ? store : filterStore(tabType);
-    render(tasks);
 })
 // 取消編輯
 $tasks.on('click', '.cancel', function(e){
@@ -237,12 +273,14 @@ $tasks.on('click', '.cancel', function(e){
         id = +$task.data('id'),
         task = store.filter((task) => task.id === id)[0],
         name = task.name,
-        deadline = task.deadline,
+        startDate = task.startDate,
+        endDate = task.endDate,
         comment = task.comment;
     originalTask.toggleClass('hide')
     taskDetail.toggleClass('hide')
     $task.find('.task-name input').val(name).end()
-        .find('.task-detail input').val(deadline).end()
+        .find('.start').val(startDate).end()
+        .find('.end').val(endDate).end()
         .find('.task-detail textarea').val(comment);
 
 })
